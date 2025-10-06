@@ -21,6 +21,13 @@ func NewRest(service *service.Service) *Rest {
 }
 
 func (r *Rest) MountEndpoint() {
+	router := r.router.Group("/api/v1")
+
+	auth := router.Group("/auth")
+	auth.POST("/register", r.Register)
+	auth.PATCH("/register", r.VerifyUser)
+	auth.PATCH("/register/resend", r.ResendOtp)
+	auth.POST("/login", r.Login)
 }
 
 func (r *Rest) Run() {

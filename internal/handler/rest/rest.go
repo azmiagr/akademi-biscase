@@ -1,0 +1,31 @@
+package rest
+
+import (
+	"akademi-business-case/internal/service"
+	"fmt"
+	"os"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Rest struct {
+	router  *gin.Engine
+	service *service.Service
+}
+
+func NewRest(service *service.Service) *Rest {
+	return &Rest{
+		router:  gin.Default(),
+		service: service,
+	}
+}
+
+func (r *Rest) MountEndpoint() {
+}
+
+func (r *Rest) Run() {
+	addr := os.Getenv("ADDRESS")
+	port := os.Getenv("PORT")
+
+	r.router.Run(fmt.Sprintf("%s:%s", addr, port))
+}

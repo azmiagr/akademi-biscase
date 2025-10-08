@@ -10,7 +10,7 @@ import (
 
 func (r *Rest) Register(c *gin.Context) {
 	param := model.UserRegister{}
-	err := c.ShouldBind(&param)
+	err := c.ShouldBindJSON(&param)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "failed to bind input", err)
 		return

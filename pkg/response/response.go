@@ -25,12 +25,19 @@ func Success(ctx *gin.Context, code int, message string, data any) {
 }
 
 func Error(ctx *gin.Context, code int, message string, err error) {
+	var errorData interface{}
+	if err != nil {
+		errorData = err.Error()
+	} else {
+		errorData = nil
+	}
+
 	ctx.JSON(code, Response{
 		Status: Status{
 			Code:      code,
 			IsSuccess: false,
 		},
 		Message: message,
-		Data:    err.Error(),
+		Data:    errorData,
 	})
 }

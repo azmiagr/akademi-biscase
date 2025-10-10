@@ -21,6 +21,7 @@ type IUserService interface {
 	Register(param *model.UserRegister) (*model.RegisterResponse, error)
 	VerifyUser(param model.VerifyUser) error
 	Login(param model.UserLogin) (*model.LoginResponse, error)
+	GetUser(param model.UserParam) (*entity.User, error)
 }
 
 type UserService struct {
@@ -72,11 +73,12 @@ func (s *UserService) Register(param *model.UserRegister) (*model.RegisterRespon
 	}
 
 	user := &entity.User{
-		UserID:   id,
-		Username: param.Username,
-		Email:    param.Email,
-		Password: hash,
-		RoleID:   2,
+		UserID:    id,
+		FirstName: param.FirstName,
+		LastName:  param.LastName,
+		Email:     param.Email,
+		Password:  hash,
+		RoleID:    2,
 	}
 
 	_, err = s.UserRepository.CreateUser(tx, user)
@@ -93,7 +95,6 @@ func (s *UserService) Register(param *model.UserRegister) (*model.RegisterRespon
 	if err != nil {
 		return nil, err
 	}
-
 	cart := &entity.Cart{
 		CartID: cartId,
 		UserID: id,
@@ -227,4 +228,8 @@ func (s *UserService) Login(param model.UserLogin) (*model.LoginResponse, error)
 
 	return result, nil
 
+}
+
+func (u *UserService) GetUser(param model.UserParam) (*entity.User, error) {
+	return u.UserRepository.GetUser(u.db, param)
 }

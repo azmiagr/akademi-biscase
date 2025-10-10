@@ -21,6 +21,7 @@ type IUserService interface {
 	Register(param *model.UserRegister) (*model.RegisterResponse, error)
 	VerifyUser(param model.VerifyUser) error
 	Login(param model.UserLogin) (*model.LoginResponse, error)
+	GetUserProfile(userID uuid.UUID) (*model.GetUserProfileResponse, error)
 	GetUser(param model.UserParam) (*entity.User, error)
 }
 
@@ -228,6 +229,27 @@ func (s *UserService) Login(param model.UserLogin) (*model.LoginResponse, error)
 
 	return result, nil
 
+}
+
+func (s *UserService) GetUserProfile(userID uuid.UUID) (*model.GetUserProfileResponse, error) {
+	var result *model.GetUserProfileResponse
+
+	tx := s.db.Begin()
+	defer tx.Rollback()
+
+	user, err := s.UserRepository.GetUser(tx, model.UserParam{
+		UserID: userID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result = &model.GetUserProfileResponse{
+		Username: user.FirstName + " " + user.LastName,
+		Email:    user.Email,
+	}
+
+	return result, nil
 }
 
 func (u *UserService) GetUser(param model.UserParam) (*entity.User, error) {

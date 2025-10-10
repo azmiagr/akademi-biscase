@@ -34,3 +34,8 @@ type UserLogin struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type GetUserProfileResponse struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}

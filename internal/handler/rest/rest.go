@@ -2,6 +2,7 @@ package rest
 
 import (
 	"akademi-business-case/internal/service"
+	"akademi-business-case/pkg/middleware"
 	"fmt"
 	"os"
 
@@ -9,14 +10,16 @@ import (
 )
 
 type Rest struct {
-	router  *gin.Engine
-	service *service.Service
+	router     *gin.Engine
+	service    *service.Service
+	middleware middleware.Interface
 }
 
-func NewRest(service *service.Service) *Rest {
+func NewRest(service *service.Service, middleware middleware.Interface) *Rest {
 	return &Rest{
-		router:  gin.Default(),
-		service: service,
+		router:     gin.Default(),
+		service:    service,
+		middleware: middleware,
 	}
 }
 
@@ -28,6 +31,10 @@ func (r *Rest) MountEndpoint() {
 	auth.PATCH("/register", r.VerifyUser)
 	auth.PATCH("/register/resend", r.ResendOtp)
 	auth.POST("/login", r.Login)
+
+	user := router.Group("/users")
+	user.Use(r.middleware.AuthenticateUser)
+	user.GET("/profile", r.GetUserProfile)
 }
 
 func (r *Rest) Run() {

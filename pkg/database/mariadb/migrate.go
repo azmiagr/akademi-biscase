@@ -12,7 +12,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.User{},
 		&entity.OtpCode{},
 		&entity.Cart{},
-		&entity.Product{},
+		&entity.Class{},
 		&entity.CartItem{},
 	)
 

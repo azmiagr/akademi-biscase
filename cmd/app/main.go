@@ -8,6 +8,7 @@ import (
 	"akademi-business-case/pkg/config"
 	"akademi-business-case/pkg/database/mariadb"
 	"akademi-business-case/pkg/jwt"
+	"akademi-business-case/pkg/middleware"
 	"log"
 )
 
@@ -28,8 +29,9 @@ func main() {
 	bcrypt := bcrypt.Init()
 	jwt := jwt.Init()
 	svc := service.NewService(repo, bcrypt, jwt)
+	middleware := middleware.Init(svc, jwt)
 
-	r := rest.NewRest(svc)
+	r := rest.NewRest(svc, middleware)
 	r.MountEndpoint()
 	r.Run()
 }

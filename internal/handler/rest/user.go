@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"akademi-business-case/entity"
 	"akademi-business-case/model"
 	"akademi-business-case/pkg/response"
 	"net/http"
@@ -82,4 +83,16 @@ func (r *Rest) Login(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusOK, "success to login user", result)
+}
+
+func (r *Rest) GetUserProfile(c *gin.Context) {
+	user := c.MustGet("user").(*entity.User)
+
+	resp, err := r.service.UserService.GetUserProfile(user.UserID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, "failed to get user profile", err)
+		return
+	}
+
+	response.Success(c, http.StatusOK, "success to get user profile", resp)
 }

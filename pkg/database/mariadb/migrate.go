@@ -14,6 +14,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.Cart{},
 		&entity.Class{},
 		&entity.CartItem{},
+		&entity.Review{},
 	)
 
 	if err != nil {

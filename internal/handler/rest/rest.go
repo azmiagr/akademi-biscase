@@ -35,6 +35,12 @@ func (r *Rest) MountEndpoint() {
 	user := router.Group("/users")
 	user.Use(r.middleware.AuthenticateUser)
 	user.GET("/profile", r.GetUserProfile)
+
+	class := router.Group("/classes")
+	class.GET("", r.GetAllClasses)
+	class.GET("/search", r.GetClassByName)
+	class.GET("/types/:classTypeID", r.GetClassesByType)
+	class.GET("/:classID", r.GetClassDetail)
 }
 
 func (r *Rest) Run() {

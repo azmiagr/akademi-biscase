@@ -22,6 +22,7 @@ type IUserService interface {
 	VerifyUser(param model.VerifyUser) error
 	Login(param model.UserLogin) (*model.LoginResponse, error)
 	GetUserProfile(userID uuid.UUID) (*model.GetUserProfileResponse, error)
+	GetMentors() ([]*model.GetMentorsResponse, error)
 	GetUser(param model.UserParam) (*entity.User, error)
 }
 
@@ -247,6 +248,26 @@ func (s *UserService) GetUserProfile(userID uuid.UUID) (*model.GetUserProfileRes
 	result = &model.GetUserProfileResponse{
 		Username: user.FirstName + " " + user.LastName,
 		Email:    user.Email,
+	}
+
+	return result, nil
+}
+
+func (s *UserService) GetMentors() ([]*model.GetMentorsResponse, error) {
+	var result []*model.GetMentorsResponse
+
+	users, err := s.UserRepository.GetUsers(s.db, model.UserParam{
+		RoleID: 3,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, user := range users {
+		result = append(result, &model.GetMentorsResponse{
+			FullName: user.FirstName + " " + user.LastName,
+			Email:    user.Email,
+		})
 	}
 
 	return result, nil

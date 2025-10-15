@@ -96,3 +96,13 @@ func (r *Rest) GetUserProfile(c *gin.Context) {
 
 	response.Success(c, http.StatusOK, "success to get user profile", resp)
 }
+
+func (r *Rest) GetMentors(c *gin.Context) {
+	mentors, err := r.service.UserService.GetMentors()
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, "failed to get members", err)
+		return
+	}
+
+	response.Success(c, http.StatusOK, "success to get members", mentors)
+}

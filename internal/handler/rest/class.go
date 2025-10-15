@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"akademi-business-case/model"
 	"akademi-business-case/pkg/response"
 	"net/http"
 
@@ -74,4 +75,30 @@ func (r *Rest) GetClassByName(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusOK, "success to get classes by name", classes)
+}
+
+func (r *Rest) CreateClass(c *gin.Context) {
+	param := model.CreateClassRequest{}
+
+	err := c.ShouldBindJSON(&param)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "failed to bind input", err)
+		return
+	}
+
+	result, err := r.service.ClassService.CreateClass(&param)
+	if err != nil {
+		if err.Error() == "user not found" {
+			response.Error(c, http.StatusBadRequest, "failed to create class", err)
+			return
+		} else if err.Error() == "user is not mentor" {
+			response.Error(c, http.StatusBadRequest, "failed to create class", err)
+			return
+		} else {
+			response.Error(c, http.StatusInternalServerError, "failed to create class", err)
+			return
+		}
+	}
+
+	response.Success(c, http.StatusCreated, "success to create class", result)
 }

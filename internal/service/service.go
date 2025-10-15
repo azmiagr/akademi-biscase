@@ -16,6 +16,6 @@ func NewService(repository *repository.Repository, bcrypt bcrypt.Interface, jwtA
 	return &Service{
 		UserService:  NewUserService(repository.UserRepository, repository.CartRepository, repository.OtpRepository, bcrypt, jwtAuth),
 		OtpService:   NewOtpService(repository.OtpRepository, repository.UserRepository),
-		ClassService: NewClassService(repository.ClassRepository),
+		ClassService: NewClassService(repository.ClassRepository, repository.UserRepository),
 	}
 }

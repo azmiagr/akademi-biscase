@@ -78,15 +78,21 @@ func (r *Rest) GetClassByName(c *gin.Context) {
 }
 
 func (r *Rest) CreateClass(c *gin.Context) {
-	param := model.CreateClassRequest{}
+	classTypeIDStr := c.Param("classTypeID")
+	classTypeID, err := uuid.Parse(classTypeIDStr)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "invalid class type ID", err)
+		return
+	}
 
-	err := c.ShouldBindJSON(&param)
+	param := model.CreateClassRequest{}
+	err = c.ShouldBindJSON(&param)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "failed to bind input", err)
 		return
 	}
 
-	result, err := r.service.ClassService.CreateClass(&param)
+	result, err := r.service.ClassService.CreateClass(&param, classTypeID)
 	if err != nil {
 		if err.Error() == "user not found" {
 			response.Error(c, http.StatusBadRequest, "failed to create class", err)

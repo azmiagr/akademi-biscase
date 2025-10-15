@@ -25,8 +25,8 @@ type jsonWebToken struct {
 }
 
 type Claims struct {
-	user_id uuid.UUID
-	isAdmin bool
+	UserID  uuid.UUID
+	IsAdmin bool
 	jwt.RegisteredClaims
 }
 
@@ -45,8 +45,8 @@ func Init() Interface {
 
 func (j *jsonWebToken) CreateJWTToken(userID uuid.UUID, isAdmin bool) (string, error) {
 	claims := &Claims{
-		user_id: userID,
-		isAdmin: isAdmin,
+		UserID:  userID,
+		IsAdmin: isAdmin,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.ExpiredTime)),
 		},
@@ -79,7 +79,7 @@ func (j *jsonWebToken) ValidateToken(tokenString string) (uuid.UUID, error) {
 		return userID, errors.New("token is not valid")
 	}
 
-	userID = claim.user_id
+	userID = claim.UserID
 	return userID, nil
 }
 

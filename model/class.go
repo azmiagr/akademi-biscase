@@ -29,3 +29,16 @@ type GetClassResponse struct {
 	TotalRating float64   `json:"total_ratings"`
 	TotalReview int       `json:"total_reviews"`
 }
+
+type CreateClassRequest struct {
+	Name        string    `json:"name" binding:"required"`
+	UserID      uuid.UUID `json:"mentor_id" binding:"required"`
+	Description string    `json:"description" binding:"required"`
+	Price       float64   `json:"price" binding:"required"`
+	Discount    float64   `json:"discount"`
+	ImageURL    string    `json:"image_url" binding:"required"`
+}
+
+type CreateClassResponse struct {
+	ClassID uuid.UUID `json:"class_id"`
+}

@@ -73,8 +73,8 @@ func (r *Rest) Login(c *gin.Context) {
 
 	result, err := r.service.UserService.Login(param)
 	if err != nil {
-		if err.Error() == "email or password is wrong" {
-			response.Error(c, http.StatusUnauthorized, "email or password is wrong", err)
+		if err.Error() == "email or password incorrect" {
+			response.Error(c, http.StatusUnauthorized, "failed to login user", err)
 			return
 		} else {
 			response.Error(c, http.StatusInternalServerError, "failed to login user", err)

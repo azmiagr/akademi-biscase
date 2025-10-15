@@ -16,7 +16,7 @@ type IClassService interface {
 	GetClassDetail(classID uuid.UUID) (*model.GetClassResponse, error)
 	GetClassesByType(classTypeID uuid.UUID) ([]*model.GetAllClassesResponse, error)
 	GetClassByName(name string, classTypeID uuid.UUID) ([]*model.GetAllClassesResponse, error)
-	CreateClass(param *model.CreateClassRequest) (*model.CreateClassResponse, error)
+	CreateClass(param *model.CreateClassRequest, classTypeID uuid.UUID) (*model.CreateClassResponse, error)
 }
 
 type ClassService struct {
@@ -146,7 +146,7 @@ func (s *ClassService) GetClassByName(name string, classTypeID uuid.UUID) ([]*mo
 	return result, nil
 }
 
-func (s *ClassService) CreateClass(param *model.CreateClassRequest) (*model.CreateClassResponse, error) {
+func (s *ClassService) CreateClass(param *model.CreateClassRequest, classTypeID uuid.UUID) (*model.CreateClassResponse, error) {
 	tx := s.db.Begin()
 	defer tx.Rollback()
 
@@ -174,6 +174,7 @@ func (s *ClassService) CreateClass(param *model.CreateClassRequest) (*model.Crea
 		Price:       param.Price,
 		Discount:    param.Discount,
 		ImageURL:    param.ImageURL,
+		ClassTypeID: classTypeID,
 	}
 
 	_, err = s.ClassRepository.CreateClass(tx, class)

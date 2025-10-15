@@ -11,6 +11,7 @@ type IUserRepository interface {
 	CreateUser(tx *gorm.DB, user *entity.User) (*entity.User, error)
 	GetUser(tx *gorm.DB, param model.UserParam) (*entity.User, error)
 	UpdateUser(tx *gorm.DB, user *entity.User) (*entity.User, error)
+	GetUsers(tx *gorm.DB, param model.UserParam) ([]*entity.User, error)
 }
 
 type UserRepository struct {
@@ -47,4 +48,14 @@ func (r *UserRepository) UpdateUser(tx *gorm.DB, user *entity.User) (*entity.Use
 	}
 
 	return user, nil
+}
+
+func (r *UserRepository) GetUsers(tx *gorm.DB, param model.UserParam) ([]*entity.User, error) {
+	users := []*entity.User{}
+	err := tx.Debug().Where(&param).Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }

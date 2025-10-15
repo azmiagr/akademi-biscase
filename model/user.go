@@ -1,6 +1,8 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type UserParam struct {
 	UserID   uuid.UUID `json:"-"`
@@ -37,5 +39,10 @@ type LoginResponse struct {
 
 type GetUserProfileResponse struct {
 	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+type GetMentorsResponse struct {
+	FullName string `json:"full_name"`
 	Email    string `json:"email"`
 }

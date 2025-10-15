@@ -37,9 +37,9 @@ func (r *Rest) MountEndpoint() {
 	user.GET("/profile", r.GetUserProfile)
 
 	admin := router.Group("/admin")
-	admin.Use(r.middleware.AuthenticateUser)
+	admin.Use(r.middleware.AuthenticateUser, r.middleware.OnlyAdmin)
 	admin.GET("/mentors", r.GetMentors)
-	admin.POST("/classes", r.CreateClass)
+	admin.POST("/classes/:classTypeID", r.CreateClass)
 
 	class := router.Group("/classes")
 	class.GET("", r.GetAllClasses)

@@ -13,6 +13,7 @@ type IClassRepository interface {
 	GetClass(tx *gorm.DB, param model.ClassParam) (*entity.Class, error)
 	GetClassesByType(tx *gorm.DB, param model.ClassParam) ([]*entity.Class, error)
 	GetClassByName(tx *gorm.DB, param model.ClassParam) ([]*entity.Class, error)
+	CreateClass(tx *gorm.DB, class *entity.Class) (*entity.Class, error)
 }
 
 type ClassRepository struct {
@@ -71,4 +72,13 @@ func (r *ClassRepository) GetClassByName(tx *gorm.DB, param model.ClassParam) ([
 	}
 
 	return classes, nil
+}
+
+func (r *ClassRepository) CreateClass(tx *gorm.DB, class *entity.Class) (*entity.Class, error) {
+	err := tx.Debug().Create(&class).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return class, nil
 }

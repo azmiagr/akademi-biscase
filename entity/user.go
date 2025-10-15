@@ -20,4 +20,5 @@ type User struct {
 	Cart     Cart      `gorm:"foreignKey:UserID"`
 	OtpCodes []OtpCode `gorm:"foreignKey:UserID"`
 	Reviews  []Review  `gorm:"foreignKey:UserID"`
+	Classes  []Class   `gorm:"foreignKey:UserID"`
 }

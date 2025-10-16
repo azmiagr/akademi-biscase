@@ -12,4 +12,6 @@ type Topic struct {
 	Name      string    `json:"name" gorm:"type:varchar(100);not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+
+	Contents []Content `gorm:"foreignKey:TopicID"`
 }

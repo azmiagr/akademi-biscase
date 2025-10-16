@@ -10,6 +10,7 @@ import (
 type Interface interface {
 	AuthenticateUser(c *gin.Context)
 	OnlyAdmin(c *gin.Context)
+	OnlyOperational(c *gin.Context)
 	Timeout() gin.HandlerFunc
 	Cors() gin.HandlerFunc
 }

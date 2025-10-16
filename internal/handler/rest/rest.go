@@ -39,7 +39,10 @@ func (r *Rest) MountEndpoint() {
 	admin := router.Group("/admin")
 	admin.Use(r.middleware.AuthenticateUser, r.middleware.OnlyAdmin)
 	admin.GET("/mentors", r.GetMentors)
-	admin.POST("/classes/:classTypeID", r.CreateClass)
+
+	operational := router.Group("/operational")
+	operational.Use(r.middleware.AuthenticateUser, r.middleware.OnlyOperational)
+	operational.POST("/classes/:classTypeID", r.CreateClass)
 
 	class := router.Group("/classes")
 	class.GET("", r.GetAllClasses)

@@ -42,3 +42,18 @@ type CreateClassRequest struct {
 type CreateClassResponse struct {
 	ClassID uuid.UUID `json:"class_id"`
 }
+
+type GetClassAdminResponse struct {
+	ClassName        string         `json:"class_name"`
+	ClassDescription string         `json:"class_description"`
+	ClassContents    []ClassContent `json:"class_contents"`
+}
+
+type ClassContent struct {
+	TopicName        string                 `json:"topic_name"`
+	ContentResponses []ClassContentResponse `json:"content_responses"`
+}
+
+type ClassContentResponse struct {
+	ContentTitle string `json:"content_title"`
+}

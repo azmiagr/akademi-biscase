@@ -36,7 +36,7 @@ func (r *ClassRepository) GetAllClasses(tx *gorm.DB) ([]*entity.Class, error) {
 
 func (r *ClassRepository) GetClass(tx *gorm.DB, param model.ClassParam) (*entity.Class, error) {
 	var class *entity.Class
-	err := tx.Debug().Preload("Topics.Contents").Where(&param).First(&class).Error
+	err := tx.Debug().Preload("ClassMentors").Preload("Reviews").Preload("Topics.Contents").Where(&param).First(&class).Error
 	if err != nil {
 		return nil, err
 	}

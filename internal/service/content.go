@@ -47,16 +47,13 @@ func (s *ContentService) CreateContent(param *model.CreateContentRequest, classI
 		return nil, errors.New("class not found")
 	}
 
-	topicID, err := uuid.NewUUID()
+	existingTopic, err = s.TopicRepository.FindByNameAndClassID(tx, param.TopicName, class.ClassID)
 	if err != nil {
-		return nil, err
-	}
+		topicID, err := uuid.NewUUID()
+		if err != nil {
+			return nil, err
+		}
 
-	existingTopic, err = s.TopicRepository.GetTopic(tx, model.GetTopicParam{
-		ClassID:   class.ClassID,
-		TopicName: param.TopicName,
-	})
-	if err != nil {
 		newTopic := &entity.Topic{
 			TopicID: topicID,
 			ClassID: class.ClassID,
@@ -94,7 +91,6 @@ func (s *ContentService) CreateContent(param *model.CreateContentRequest, classI
 		return nil, err
 	}
 
-	// Fetch ulang class dengan data terbaru (termasuk content yang baru dibuat)
 	class, err = s.ClassRepository.GetClass(tx, model.ClassParam{
 		ClassID: classID,
 	})

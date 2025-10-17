@@ -33,7 +33,7 @@ func (r *UserRepository) CreateUser(tx *gorm.DB, user *entity.User) (*entity.Use
 
 func (r *UserRepository) GetUser(tx *gorm.DB, param model.UserParam) (*entity.User, error) {
 	user := entity.User{}
-	err := tx.Debug().Preload("Cart").Where(&param).First(&user).Error
+	err := tx.Debug().Preload("Reviews").Preload("Cart").Where(&param).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

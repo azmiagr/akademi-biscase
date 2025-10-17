@@ -5,7 +5,6 @@ import "github.com/google/uuid"
 type Class struct {
 	ClassID     uuid.UUID `json:"product_id" gorm:"type:varchar(36);primaryKey"`
 	ClassTypeID uuid.UUID `json:"class_type_id"`
-	UserID      uuid.UUID `json:"user_id"`
 	Name        string    `json:"name" gorm:"type:varchar(100);not null"`
 	Description string    `json:"description" gorm:"type:text;default:null"`
 	Price       float64   `json:"price" gorm:"type:decimal(10,2);not null"`
@@ -15,7 +14,10 @@ type Class struct {
 	TotalRating float64   `json:"total_ratings" gorm:"type:decimal(2,1);default:0"`
 	TotalReview int       `json:"total_reviews" gorm:"type:int;default:0"`
 
-	Reviews   []Review   `gorm:"foreignKey:ClassID"`
-	CartItems []CartItem `gorm:"foreignKey:ClassID"`
-	Topics    []Topic    `gorm:"foreignKey:ClassID"`
+	ClassMentors    []ClassMentor   `gorm:"foreignKey:ClassID"`
+	Reviews         []Review        `gorm:"foreignKey:ClassID"`
+	CartItems       []CartItem      `gorm:"foreignKey:ClassID"`
+	Topics          []Topic         `gorm:"foreignKey:ClassID"`
+	EnrolledClasses []EnrolledClass `gorm:"foreignKey:ClassID"`
+	Payments        []Payment       `gorm:"foreignKey:ClassID"`
 }

@@ -35,6 +35,7 @@ func (r *Rest) MountEndpoint() {
 	user := router.Group("/users")
 	user.Use(r.middleware.AuthenticateUser)
 	user.GET("/profile", r.GetUserProfile)
+	user.POST("/reviews/:classID", r.AddReview)
 
 	admin := router.Group("/admin")
 	admin.Use(r.middleware.AuthenticateUser, r.middleware.OnlyAdmin)

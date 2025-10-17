@@ -21,6 +21,7 @@ type Content struct {
 	Description string      `json:"description" gorm:"type:text;default:null"`
 	ContentURL  string      `json:"content_url" gorm:"type:varchar(255);default:null"`
 	Sequencence int         `json:"sequencence" gorm:"type:int;default:0"`
+	IsCompleted bool        `json:"is_completed" gorm:"type:boolean;default:false"`
 	CreatedAt   time.Time   `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt   time.Time   `json:"updated_at" gorm:"autoUpdateTime"`
 

@@ -20,16 +20,18 @@ type IClassService interface {
 }
 
 type ClassService struct {
-	db              *gorm.DB
-	ClassRepository repository.IClassRepository
-	UserRepository  repository.IUserRepository
+	db                    *gorm.DB
+	ClassRepository       repository.IClassRepository
+	UserRepository        repository.IUserRepository
+	ClassMentorRepository repository.IClassMentorRepository
 }
 
-func NewClassService(classRepository repository.IClassRepository, userRepository repository.IUserRepository) IClassService {
+func NewClassService(classRepository repository.IClassRepository, userRepository repository.IUserRepository, classMentorRepository repository.IClassMentorRepository) IClassService {
 	return &ClassService{
-		db:              mariadb.Connection,
-		ClassRepository: classRepository,
-		UserRepository:  userRepository,
+		db:                    mariadb.Connection,
+		ClassRepository:       classRepository,
+		UserRepository:        userRepository,
+		ClassMentorRepository: classMentorRepository,
 	}
 }
 
@@ -57,11 +59,19 @@ func (s *ClassService) GetAllClasses() ([]*model.GetAllClassesResponse, error) {
 		})
 	}
 
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, err
+	}
+
 	return result, nil
 }
 
 func (s *ClassService) GetClassDetail(classID uuid.UUID) (*model.GetClassResponse, error) {
-	var result *model.GetClassResponse
+	var (
+		result     *model.GetClassResponse
+		totalTopic int
+	)
 
 	tx := s.db.Begin()
 	defer tx.Rollback()
@@ -73,6 +83,44 @@ func (s *ClassService) GetClassDetail(classID uuid.UUID) (*model.GetClassRespons
 		return nil, err
 	}
 
+	var topics []model.TopicResponse
+	for _, topic := range class.Topics {
+		topics = append(topics, model.TopicResponse{
+			Name: topic.Name,
+		})
+		totalTopic++
+	}
+
+	var mentors []model.MentorResponse
+	for _, mentor := range class.ClassMentors {
+		user, err := s.UserRepository.GetUser(tx, model.UserParam{
+			UserID: mentor.UserID,
+		})
+		if err != nil {
+			return nil, err
+		}
+		mentors = append(mentors, model.MentorResponse{
+			FullName: user.FirstName + " " + user.LastName,
+			Title:    user.Title,
+		})
+	}
+
+	var reviews []model.ReviewResponse
+	for _, review := range class.Reviews {
+		user, err := s.UserRepository.GetUser(tx, model.UserParam{
+			UserID: review.UserID,
+		})
+		if err != nil {
+			return nil, err
+		}
+		reviews = append(reviews, model.ReviewResponse{
+			ReviewerName: user.FirstName + " " + user.LastName,
+			Rating:       review.Rating,
+			Comment:      review.Comment,
+			CreatedAt:    review.CreatedAt,
+		})
+	}
+
 	result = &model.GetClassResponse{
 		ClassID:     class.ClassID,
 		Name:        class.Name,
@@ -82,6 +130,15 @@ func (s *ClassService) GetClassDetail(classID uuid.UUID) (*model.GetClassRespons
 		ImageURL:    class.ImageURL,
 		TotalRating: class.TotalRating,
 		TotalReview: class.TotalReview,
+		TotalTopic:  totalTopic,
+		Topics:      topics,
+		Reviews:     reviews,
+		Mentor:      mentors,
+	}
+
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, err
 	}
 
 	return result, nil
@@ -111,6 +168,11 @@ func (s *ClassService) GetClassesByType(classTypeID uuid.UUID) ([]*model.GetAllC
 			TotalRating: class.TotalRating,
 			TotalReview: class.TotalReview,
 		})
+	}
+
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, err
 	}
 
 	return result, nil
@@ -143,6 +205,11 @@ func (s *ClassService) GetClassByName(name string, classTypeID uuid.UUID) ([]*mo
 		})
 	}
 
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, err
+	}
+
 	return result, nil
 }
 
@@ -168,7 +235,6 @@ func (s *ClassService) CreateClass(param *model.CreateClassRequest, classTypeID 
 
 	class := &entity.Class{
 		ClassID:     classID,
-		UserID:      user.UserID,
 		Name:        param.Name,
 		Description: param.Description,
 		Price:       param.Price,
@@ -178,6 +244,15 @@ func (s *ClassService) CreateClass(param *model.CreateClassRequest, classTypeID 
 	}
 
 	_, err = s.ClassRepository.CreateClass(tx, class)
+	if err != nil {
+		return nil, err
+	}
+
+	classMentor := &entity.ClassMentor{
+		ClassID: classID,
+		UserID:  user.UserID,
+	}
+	_, err = s.ClassMentorRepository.CreateClassMentor(tx, classMentor)
 	if err != nil {
 		return nil, err
 	}

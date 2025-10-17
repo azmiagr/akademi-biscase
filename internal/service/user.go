@@ -250,6 +250,11 @@ func (s *UserService) GetUserProfile(userID uuid.UUID) (*model.GetUserProfileRes
 		Email:    user.Email,
 	}
 
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, err
+	}
+
 	return result, nil
 }
 

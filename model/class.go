@@ -1,6 +1,10 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type GetAllClassesResponse struct {
 	ClassID     uuid.UUID `json:"product_id" gorm:"type:varchar(36);primaryKey"`
@@ -13,6 +17,22 @@ type GetAllClassesResponse struct {
 	TotalReview int       `json:"total_reviews" gorm:"type:int;default:0"`
 }
 
+type MentorResponse struct {
+	FullName string `json:"full_name"`
+	Title    string `json:"title"`
+}
+
+type ReviewResponse struct {
+	ReviewerName string    `json:"reviewer_name"`
+	Rating       int       `json:"rating"`
+	Comment      string    `json:"comment"`
+	CreatedAt    time.Time `json:"created_at"`
+}
+
+type TopicResponse struct {
+	Name string `json:"name"`
+}
+
 type ClassParam struct {
 	ClassID     uuid.UUID `json:"-"`
 	ClassTypeID uuid.UUID `json:"-"`
@@ -20,14 +40,18 @@ type ClassParam struct {
 }
 
 type GetClassResponse struct {
-	ClassID     uuid.UUID `json:"product_id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Price       float64   `json:"price"`
-	Discount    float64   `json:"discount"`
-	ImageURL    string    `json:"image_url"`
-	TotalRating float64   `json:"total_ratings"`
-	TotalReview int       `json:"total_reviews"`
+	ClassID     uuid.UUID        `json:"product_id"`
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Price       float64          `json:"price"`
+	Discount    float64          `json:"discount"`
+	ImageURL    string           `json:"image_url"`
+	TotalRating float64          `json:"total_ratings"`
+	TotalReview int              `json:"total_reviews"`
+	TotalTopic  int              `json:"total_topic"`
+	Topics      []TopicResponse  `json:"topics"`
+	Reviews     []ReviewResponse `json:"reviews"`
+	Mentor      []MentorResponse `json:"mentor"`
 }
 
 type CreateClassRequest struct {
